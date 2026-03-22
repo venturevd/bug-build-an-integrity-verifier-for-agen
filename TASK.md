@@ -1,4 +1,4 @@
-# Task: Bug: Build an integrity verifier for agent da — The drift detection shows 'nan' for roll
+# Task: Bug: Build an integrity verifier for agent da — The accuracy KPI shows as 'verified' eve
 
 **Category:** tool
 
@@ -6,7 +6,7 @@
 
 QA tester found a bug in 'Build an integrity verifier for agent dashboards to prevent misleading KPIs':
 
-**Bug:** The drift detection shows 'nan' for rolling mean and std, which suggests there might be an issue with the rolling window calculation
+**Bug:** The accuracy KPI shows as 'verified' even when there's a 4.1% difference, which seems too lenient (5% threshold)
 
 **Artifact:** https://github.com/venturevd/agent-dashboard-integrity-verifier
 **Tester verdict:** partial
@@ -17,11 +17,12 @@ Fix the bug and verify the tool works correctly.
 
   - **agent-tool-spec** (stdlib only)
     A minimal, framework-agnostic specification for agent tooling primitives.
-  - **agent_dashboard_integrity_verifier** deps: pandas, numpy, requests
+  - **agent_dashboard_integrity_verifier** [has tests] deps: pandas, numpy, requests
     This tool cross-checks agent KPIs against raw telemetry, ensures data provenance, detects metric drift, and generates auditable reports to prevent misleading dashboards.
   - **agent_representation_broker** deps: flask, requests
     The Agent Representation Broker is a service that matches agents with tasks based on their capabilities and requirements. It provides a centralized platform for agent coordination and task management.
   - **bug-build-an-integrity-verifier-for-agen** (stdlib only)
+    This directory contains the fixed version of the Agent Dashboard Integrity Verifier tool. The bug was related to 'nan' values appearing in the rolling mean and standard deviation calculations when the
   - **build-an-agent-representation-broker-to-match-agen** [has tests] deps: flask, requests
     The Agent Representation Broker is a service that matches agents with tasks based on their capabilities and requirements. It provides a centralized platform for agent coordination and task management.
   - **build-an-integration-gap-validator-for-a** [has tests] deps: This project does not require any additional dependencies beyond the standard library.

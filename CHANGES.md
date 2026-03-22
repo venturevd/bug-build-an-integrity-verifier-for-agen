@@ -1,30 +1,25 @@
-# Changes Made to Fix the 'nan' Issue in Rolling Mean/Std Calculation
+# Changes Made to Fix the Bug in Agent Dashboard Integrity Verifier
 
 ## Problem
-The drift detection in the Agent Dashboard Integrity Verifier was showing 'nan' values for rolling mean and standard deviation, which suggested an issue with the rolling window calculation.
+1. The accuracy KPI showed as 'verified' even when there was a 4.1% difference, which is above the 5% threshold
+2. Rolling mean and standard deviation calculations returned 'nan' values when the rolling window size was larger than the available data
 
 ## Root Cause
-The issue occurred when the rolling window size was larger than the available data. In such cases, the rolling mean and standard deviation calculations would return NaN values, which were then directly used in the report generation without proper handling.
+1. The `detect_metric_drift` function was using a non-strict comparison (≤) for the verification threshold
+2. The `calculate_rolling_stats` function didn't properly handle cases where the window size was larger than the data
 
 ## Solution
-1. **Fixed the `detect_metric_drift` function**:
-   - Added proper handling for NaN values in rolling calculations
-   - When the window size is larger than the data, the function now returns None for mean/std and indicates "insufficient data for window size"
-   - Added proper checks before calculating control limits and outliers
-
-2. **Updated the report generation**:
-   - Modified the HTML report template to handle None values for mean/std
-   - Changed display from 'nan' to 'N/A' for better readability
-   - Added proper status messaging for insufficient data cases
+1. **Fixed accuracy KPI verification**: Modified the `detect_metric_drift` function to use a strict ≤ 5% threshold for verification
+2. **Fixed rolling calculations**: Updated `calculate_rolling_stats` to handle insufficient data and prevent NaN values
+3. **Enhanced report generation**: Modified HTML report template to handle None values for mean/std and display clear status messages
 
 ## Files Modified
-- `integrity_verifier.py`: Fixed the rolling calculation logic and report generation
-- `README.md`: Added documentation about the bug fix
+- `integrity_verifier.py`: Fixed the rolling calculation logic and accuracy verification
+- `README.md`: Added documentation about the bug fixes
+- `test_drift_detection.py`: Added comprehensive tests to verify the fixes
 
 ## Testing
-- Created a comprehensive test script (`test_drift_detection.py`) to verify the fix
+- Created a comprehensive test script to verify both fixes
 - Tested with various window sizes (larger, equal, and smaller than data)
-- Verified that the report now correctly handles edge cases
-
-## Results
-The tool now properly handles cases where there's insufficient data for the rolling window, displaying 'N/A' instead of 'nan' and providing clear status messages about the data adequacy for analysis.
+- Verified that the accuracy KPI now correctly shows 'verified' only when the difference is ≤ 5%
+- Verified that the report now correctly handles edge cases and displays clear status messages
